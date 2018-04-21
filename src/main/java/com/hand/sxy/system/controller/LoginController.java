@@ -21,7 +21,7 @@ public class LoginController {
     @Autowired
     private ILoginService loginService;
 
-    @RequestMapping("/login")
+    @RequestMapping("/api/system/login")
     public String login(HttpServletRequest request, User user) {
         loginService.login(user);
         logger.info("登录成功");
