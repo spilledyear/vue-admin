@@ -19,8 +19,7 @@ public class LoginServiceImpl implements ILoginService {
     private IUserSrvice userSrvice;
 
     @Override
-    public boolean login(User user) {
-        List<User> userList = userSrvice.query(user);
-        return (userList != null && !userList.isEmpty());
+    public List<User> login(User user) {
+        return userSrvice.query(user);
     }
 }

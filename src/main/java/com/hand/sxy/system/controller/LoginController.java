@@ -1,14 +1,18 @@
 package com.hand.sxy.system.controller;
 
 import com.hand.sxy.account.dto.User;
+import com.hand.sxy.system.dto.Result;
 import com.hand.sxy.system.service.ILoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author spilledyear
@@ -21,11 +25,19 @@ public class LoginController {
     @Autowired
     private ILoginService loginService;
 
-    @RequestMapping("/api/system/login")
-    public String login(HttpServletRequest request, User user) {
-        loginService.login(user);
+    @RequestMapping(value = "/api/system/login", method = RequestMethod.POST)
+    public Result login(HttpServletRequest request, @RequestBody User user) {
+
+        List<User> userList = loginService.login(user);
+        Result result = new Result(userList);
+
+        if (userList == null || userList.isEmpty()) {
+            logger.info("登录失败，用户名或密码错误");
+            result.setSuccess(false);
+            result.setMessage("用户名或密码错误");
+        }
         logger.info("登录成功");
-        return "success";
+        return result;
     }
 
 }
