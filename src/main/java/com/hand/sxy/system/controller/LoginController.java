@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -38,6 +41,16 @@ public class LoginController {
         }
         logger.info("登录成功");
         return result;
+    }
+
+    @RequestMapping(value = "/login")
+    public void login(HttpServletResponse response) throws IOException{
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.write("{\"status\":\"error\",\"msg\":\"尚未登录，请登录!\"}");
+        out.flush();
+        out.close();
     }
 
 }
