@@ -19,19 +19,34 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/login", "/api/system/login").permitAll()
+                .antMatchers("/login", "/api/system/login", "/resources/**").permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')")
                 .anyRequest().authenticated()
-                .and()
 
-                .formLogin().loginPage("/login").loginProcessingUrl("/api/system/login").permitAll()
                 .and()
+                .formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/api/system/login")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .failureForwardUrl("/login?error")
+                .permitAll()
 
-                .logout().permitAll();
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/index")
+                .permitAll()
+
+                .and()
+                .httpBasic()
+                .disable();
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth
+    public void configureGlobal(AuthenticationManagerBuilder managerBuilder) throws Exception {
+//        managerBuilder
 //                .inMemoryAuthentication()
 //                .withUser("admin").password("123").roles("USER");
     }
