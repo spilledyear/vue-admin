@@ -1,5 +1,7 @@
 package com.hand.sxy.account.dto;
 
+import java.util.Date;
+
 /**
  * @author spilledyear
  * @date 2018/4/21 13:29
@@ -9,6 +11,8 @@ public class User {
     private String username;
     private String password;
     private String phone;
+    private Date birthDate;
+    private Long age;
 
 
     public Long getUserId() {
@@ -41,5 +45,21 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public Long getAge() {
+        return age;
+    }
+
+    public void setAge(Long age) {
+        this.age = age;
     }
 }

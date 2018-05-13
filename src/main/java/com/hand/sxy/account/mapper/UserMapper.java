@@ -16,4 +16,6 @@ public interface UserMapper {
      * @return
      */
     List<User> query(User user);
+
+    User findByUserName(String username);
 }

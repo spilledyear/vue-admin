@@ -38,13 +38,16 @@ public class LoginController {
             logger.info("登录失败，用户名或密码错误");
             result.setSuccess(false);
             result.setMessage("用户名或密码错误");
+            return result;
         }
+
+
         logger.info("登录成功");
         return result;
     }
 
     @RequestMapping(value = "/login")
-    public void login(HttpServletResponse response) throws IOException{
+    public void login(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
