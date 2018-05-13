@@ -14,4 +14,9 @@
     <select id="query" resultMap="BaseResultMap" parameterType="com.hand.sxy.account.dto.User">
         SELECT * FROM SYS_USER WHERE USERNAME = #{username} AND PASSWORD = #{password}
     </select>
+
+
+    <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT * FROM SYS_USER WHERE USER_NAME = #{username,jdbcType=VARCHAR}
+    </select>
 </mapper>

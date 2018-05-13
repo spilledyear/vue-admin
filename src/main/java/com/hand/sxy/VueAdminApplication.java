@@ -5,8 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * 如果不加 MapperScan 这个注解，会提示 xxxMapper 不是一个有效Been
  * @author spilledyear
+ * <p>
+ * 如果不加 MapperScan 这个注解，会提示 xxxMapper 不是一个有效Been
  */
 @SpringBootApplication
 @MapperScan("com.hand.sxy.*.mapper")

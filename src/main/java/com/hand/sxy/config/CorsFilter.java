@@ -1,4 +1,4 @@
-package com.hand.sxy.filter;
+package com.hand.sxy.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

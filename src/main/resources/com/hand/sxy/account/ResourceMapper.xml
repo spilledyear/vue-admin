@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hand.sxy.account.mapper.ResourceMapper">
+    <resultMap id="BaseResultMap" type="com.hand.sxy.account.dto.Resource">
+        <id column="ROLE_RESOURCE_ID" property="roleResourceId" jdbcType="DECIMAL"/>
+        <id column="ROLE_ID" property="roleId" jdbcType="DECIMAL"/>
+        <id column="RESOURCE_ID" property="resourceId" jdbcType="DECIMAL"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="DATE"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="DATE"/>
+    </resultMap>
+
+    <select id="query" resultMap="BaseResultMap" parameterType="com.hand.sxy.account.dto.Resource">
+        SELECT * FROM SYS_ROLE_RESOURCE
+    </select>
+</mapper>

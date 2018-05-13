@@ -1,6 +1,7 @@
 package com.hand.sxy.account.mapper;
 
 import com.hand.sxy.account.dto.User;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -12,10 +13,17 @@ public interface UserMapper {
     /**
      * 查询用户
      *
-     * @param user
+     * @param dto
      * @return
      */
-    List<User> query(User user);
+    List<User> query(User dto);
 
-    User findByUserName(String username);
+
+    /**
+     * 根据用户名查找用户
+     *
+     * @param username
+     * @return
+     */
+    User selectByUserName(String username);
 }

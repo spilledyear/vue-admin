@@ -1,12 +1,18 @@
 package com.hand.sxy.config;
 
+import com.hand.sxy.security.CustomUserService;
+import com.hand.sxy.security.MyFilterSecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
 /**
  * @author spilledyear
@@ -16,43 +22,61 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private MyFilterSecurityInterceptor myFilterSecurityInterceptor;
+
+
+    /**
+     * //注册 UserDetailsService 的 Bean
+     *
+     * @return
+     */
+    @Bean
+    UserDetailsService customUserService() {
+        return new CustomUserService();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login",  "/api/*", "/resources/**").permitAll()
+                .antMatchers("/login", "/api/system/login", "/resources/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')")
+
                 .anyRequest().authenticated()
 
                 .and()
-                .formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/api/system/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .failureForwardUrl("/login?error")
-                .permitAll()
+                .formLogin().loginPage("/login").loginProcessingUrl("/api/system/login").usernameParameter("username").passwordParameter("password").failureForwardUrl("/login?error").permitAll()
 
                 .and()
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/index")
-                .permitAll()
+                .logout().logoutUrl("/logout").logoutSuccessUrl("/index").permitAll();
 
-                .and()
-                .httpBasic()
-                .disable();
+
+        http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class).csrf().disable();
+
+
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder managerBuilder) throws Exception {
-//        managerBuilder
-//                .inMemoryAuthentication()
-//                .withUser("admin").password("123").roles("USER");
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        /**
+         * userDetailService验证
+         */
+        auth.userDetailsService(customUserService()).passwordEncoder(new PasswordEncoder() {
+
+            @Override
+            public String encode(CharSequence rawPassword) {
+                return rawPassword.toString();
+            }
+
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                return encodedPassword.equals(rawPassword.toString());
+            }
+        });
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/login", "/api/*");
+        web.ignoring().antMatchers("/login", "/api/system/login");
     }
 }

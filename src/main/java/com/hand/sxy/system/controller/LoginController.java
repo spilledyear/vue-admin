@@ -47,7 +47,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login")
-    public void login(HttpServletResponse response) throws IOException {
+    public void login(HttpServletResponse response, @RequestBody User user) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();

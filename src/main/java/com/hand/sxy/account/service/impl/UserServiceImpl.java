@@ -19,7 +19,7 @@ public class UserServiceImpl implements IUserSrvice {
     UserMapper userMapper;
 
     @Override
-    public List<User> query(User user) {
-        return userMapper.query(user);
+    public List<User> query(User dto) {
+        return userMapper.query(dto);
     }
 }
