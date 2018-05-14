@@ -1,19 +1,27 @@
 package com.hand.sxy.config;
 
+import com.hand.sxy.jwt.JwtAuthenticationEntryPoint;
+import com.hand.sxy.jwt.JwtAuthorizationTokenFilter;
+import com.hand.sxy.jwt.JwtTokenUtil;
 import com.hand.sxy.security.CustomUserService;
 import com.hand.sxy.security.MyFilterSecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
 /**
@@ -25,7 +33,32 @@ import org.springframework.session.security.web.authentication.SpringSessionReme
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    private JwtAuthenticationEntryPoint unauthorizedHandler;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Value("${jwt.header}")
+    private String tokenHeader;
+
+    @Value("${jwt.route.authentication.path}")
+    private String authenticationPath;
+
+    @Autowired
     private MyFilterSecurityInterceptor myFilterSecurityInterceptor;
+
+
+    /**
+     * 通过这种方式注入 authenticationManagerBean ，然后在别的地方也可以用
+     *
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
 
     /**
@@ -47,9 +80,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+
+                // don't create session
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+
+
+                .authorizeRequests()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/*.html", "/**/*.html", "/**/*.js", "/**/*.css").permitAll()
+                .antMatchers("/oauth/*", "/auth/**").permitAll()
                 .antMatchers("/api/role/query").hasRole("管理员")
                 .anyRequest().authenticated()
 
@@ -59,10 +101,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/api/system/logout").permitAll();
 
-        http.rememberMe().rememberMeServices(rememberMeServices());
+//        http.rememberMe().rememberMeServices(rememberMeServices());
 
-        http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class).csrf().disable();
+//        http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class).csrf().disable();
 
+        // Custom JWT based security filter
+        JwtAuthorizationTokenFilter authenticationTokenFilter = new JwtAuthorizationTokenFilter(customUserService(), jwtTokenUtil, tokenHeader);
+        http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // disable page caching
+        http.headers()
+                .frameOptions().sameOrigin()  // required to set for H2 else H2 Console will be blank.
+                .cacheControl();
 
     }
 
