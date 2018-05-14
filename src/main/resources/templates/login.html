@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>登录界面</title>
+</head>
+
+<body>
+    <form action="/api/system/login" method="post" id="loginForm" enctype="application/json">
+        <div>
+            <div>
+                <input name="username" type="text" placeholder="手机号/邮箱" value="admin">
+            </div>
+
+            <div>
+                <input name="password" type="password" placeholder="密码" value="123456">
+            </div>
+        </div>
+
+        <div class="form_btn">
+            <input type="submit" value="登录">
+        </div>
+    </form>
+</body>
+</html>

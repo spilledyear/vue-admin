@@ -6,22 +6,22 @@ import com.hand.sxy.system.service.ILoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author spilledyear
  * @date 2018/4/21 12:58
  */
-@RestController
+@Controller
 public class LoginController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -29,7 +29,8 @@ public class LoginController {
     private ILoginService loginService;
 
     @RequestMapping(value = "/api/system/login", method = RequestMethod.POST)
-    public Result login(HttpServletRequest request, @RequestBody User user) {
+    @ResponseBody
+    public Result login(HttpServletRequest request, User user) {
 
         List<User> userList = loginService.login(user);
         Result result = new Result(userList);
@@ -41,19 +42,22 @@ public class LoginController {
             return result;
         }
 
-
         logger.info("登录成功");
         return result;
     }
 
-    @RequestMapping(value = "/login")
-    public void login(HttpServletResponse response, @RequestBody User user) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.write("{\"status\":\"error\",\"msg\":\"尚未登录，请登录!\"}");
-        out.flush();
-        out.close();
+    @RequestMapping("/login")
+    public String require(HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        /**
+         * 返回的内容就是templetes下面文件的名称
+         * return new ModelAndView("loginPage", map);
+         */
+        return "login";
     }
 
+    @RequestMapping("/")
+    public String index(HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+
+        return "index";
+    }
 }

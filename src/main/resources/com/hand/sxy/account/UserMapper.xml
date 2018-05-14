@@ -17,6 +17,6 @@
 
 
     <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
-        SELECT * FROM SYS_USER WHERE USER_NAME = #{username,jdbcType=VARCHAR}
+        SELECT * FROM SYS_USER WHERE USERNAME = #{username,jdbcType=VARCHAR}
     </select>
 </mapper>

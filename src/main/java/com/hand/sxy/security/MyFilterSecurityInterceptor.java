@@ -50,6 +50,13 @@ public class MyFilterSecurityInterceptor extends AbstractSecurityInterceptor imp
         //fi里面有一个被拦截的url
         //里面调用MyInvocationSecurityMetadataSource的getAttributes(Object object)这个方法获取fi对应的所有权限
         //再调用MyAccessDecisionManager的decide方法来校验用户的权限是否足够
+        /**
+         *
+         登陆后，每次访问资源都会被这个拦截器拦截，会执行doFilter这个方法，这个方法调用了invoke方法，
+         其中fi断点显示是一个url（可能重写了toString方法吧，但是里面还有一些方法的），最重要的是beforeInvocation这个方法，
+         它首先会调用MyInvocationSecurityMetadataSource类的getAttributes方法获取被拦截url所需的权限，
+         在调用MyAccessDecisionManager类decide方法判断用户是否够权限。弄完这一切就会执行下一个拦截器。
+         */
         InterceptorStatusToken token = super.beforeInvocation(fi);
         try {
             //执行下一个拦截器

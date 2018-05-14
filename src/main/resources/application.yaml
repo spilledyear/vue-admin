@@ -9,6 +9,53 @@ spring:
     password: root
     driver-class-name: com.mysql.jdbc.Driver
 
+  redis:
+    host: localhost
+    port: 6379
+    database: 15
+
+
+  #设定静态文件路径，js,css等
+  mvc:
+    static-path-pattern: /static/**
+
+
+  #thymelea 模板配置
+  thymeleaf:
+    enable: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    encoding: UTF-8
+    cache: false
+
+
+  #freemarker 模板配置
+#  freemarker:
+#    enabled: true
+#    order: 1
+#    allow-request-override: false
+#    allow-session-override: false
+#    expose-session-attributes: false
+#    expose-spring-macro-helpers: false
+#    allow-session-override: false
+#    prefer-file-system: false
+#    cache: false
+#    content-type: text/html
+#    suffix: .ftl
+#    template-loader-path: classpath:/templates
+#    settings:
+#      template_update_delay: 0
+#      default_encoding: UTF-8
+#      classic_compatible: true
+
+  resources:
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /**
+
 
 mybatis:
   mapper-locations: classpath:**/*.xml
@@ -16,6 +63,10 @@ mybatis:
 
 logging:
   level:
-    com:
-      hand:
-        sxy: DEBUG
+    org:
+      springframework:
+        security: DEBUG
+    com: WARN
+#      hand:
+#        sxy: DEBUG
+

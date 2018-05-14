@@ -28,12 +28,21 @@ public class MyAccessDecisionManager implements AccessDecisionManager {
      * @throws AccessDeniedException
      * @throws InsufficientAuthenticationException
      */
+
+    /**
+     * 检查用户是否够权限访问资源
+     * authentication 是从spring的全局缓存SecurityContextHolder中拿到的，里面是用户的认证信息
+     * object 是 url
+     * configAttributes 这个URL所需要的权限
+     * @see org.springframework.security.access.AccessDecisionManager#decide(org.springframework.security.core.Authentication, java.lang.Object, java.util.Collection)
+     */
     @Override
     public void decide(Authentication authentication, Object object, Collection<ConfigAttribute> configAttributes) throws AccessDeniedException, InsufficientAuthenticationException {
 
         HttpServletRequest request = ((FilterInvocation) object).getHttpRequest();
         String url, method;
         AntPathRequestMatcher matcher;
+
         for (GrantedAuthority ga : authentication.getAuthorities()) {
             if (ga instanceof MyGrantedAuthority) {
                 MyGrantedAuthority urlGrantedAuthority = (MyGrantedAuthority) ga;
@@ -54,6 +63,8 @@ public class MyAccessDecisionManager implements AccessDecisionManager {
                 }
             }
         }
+
+        //注意：执行这里，后台是会抛异常的，但是界面会跳转到所配的access-denied-page页面
         throw new AccessDeniedException("no right");
     }
 

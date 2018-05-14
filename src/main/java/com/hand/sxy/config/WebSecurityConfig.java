@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
 /**
  * @author spilledyear
@@ -36,20 +38,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new CustomUserService();
     }
 
+    @Bean
+    RememberMeServices rememberMeServices() {
+        SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
+        rememberMeServices.setAlwaysRemember(true);
+        return rememberMeServices;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login", "/api/system/login", "/resources/**").permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-
+                .antMatchers("/login").permitAll()
+                .antMatchers("/*.html", "/**/*.html", "/**/*.js", "/**/*.css").permitAll()
+                .antMatchers("/api/role/query").hasRole("管理员")
                 .anyRequest().authenticated()
 
                 .and()
-                .formLogin().loginPage("/login").loginProcessingUrl("/api/system/login").usernameParameter("username").passwordParameter("password").failureForwardUrl("/login?error").permitAll()
+                .formLogin().loginPage("/login").loginProcessingUrl("/api/system/login").usernameParameter("username").passwordParameter("password").permitAll()
 
                 .and()
-                .logout().logoutUrl("/logout").logoutSuccessUrl("/index").permitAll();
+                .logout().logoutUrl("/logout").logoutSuccessUrl("/api/system/logout").permitAll();
 
+        http.rememberMe().rememberMeServices(rememberMeServices());
 
         http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class).csrf().disable();
 
@@ -76,7 +86,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/login", "/api/system/login");
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/login")
+
+                .and()
+
+                .ignoring().antMatchers("/**/*.html", "/**/*.js", "/**/*.css");
     }
 }
