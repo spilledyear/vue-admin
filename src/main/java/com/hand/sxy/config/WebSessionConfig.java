@@ -13,7 +13,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 public class WebSessionConfig {
 
     /**
-     * Springoot2 中连接Redis的方式已经变了，不再勇Jedis了
+     * Springoot2 中连接Redis的方式已经变了，不再用Jedis了
      *
      * @return
      */
