@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -89,7 +90,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
                 .authorizeRequests()
-                .antMatchers("/login", "/auth", "/oauth/*").permitAll()
+                .antMatchers("/login", "/auth", "/oauth/*", "/api/**").permitAll()
                 .antMatchers("/*.html", "/**/*.html", "/**/*.js", "/**/*.css").permitAll()
                 .antMatchers("/api/role/query").hasRole("管理员")
                 .anyRequest().authenticated()
@@ -136,7 +137,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/login", "/auth")
+        web.ignoring().antMatchers(HttpMethod.POST,"/login", "/auth")
 
                 .and()
 

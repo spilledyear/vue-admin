@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     private IUserSrvice userSrvice;
 
-    @RequestMapping(value = "/api/user/query", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/api/user/query", method = RequestMethod.POST)
     public ResultResponse query(HttpServletRequest request, @RequestBody User user) {
         return new ResultResponse(userSrvice.query(user));
     }

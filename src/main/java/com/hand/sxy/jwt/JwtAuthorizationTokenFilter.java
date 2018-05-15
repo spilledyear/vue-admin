@@ -38,14 +38,12 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         logger.debug("processing authentication for '{}'", request.getRequestURL());
 
-        final String requestHeader = request.getHeader(this.tokenHeader);
+        final String token = request.getHeader(this.tokenHeader);
 
         String username = null;
-        String authToken = null;
-        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            authToken = requestHeader.substring(7);
+        if (token != null) {
             try {
-                username = jwtTokenUtil.getUsernameFromToken(authToken);
+                username = jwtTokenUtil.getUsernameFromToken(token);
             } catch (IllegalArgumentException e) {
                 logger.error("从Token中获取用户名失败", e);
             } catch (ExpiredJwtException e) {
@@ -63,7 +61,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             // 校验前端传过来的Token是否有问题
-            if (jwtTokenUtil.validateToken(authToken, userDetails)) {
+            if (jwtTokenUtil.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 logger.info("用户 '{}' 授权成功, 赋值给 SecurityContextHolder 上下文", username);

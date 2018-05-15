@@ -61,7 +61,7 @@ mybatis:
   mapper-locations: classpath:**/*.xml
 
 jwt:
-  header: Authorization
+  header: AUTHORIZATION-TOKEN
   secret: mySecret
   expiration: 604800
   route:
