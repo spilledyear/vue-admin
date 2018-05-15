@@ -89,9 +89,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
                 .authorizeRequests()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/login", "/auth", "/oauth/*").permitAll()
                 .antMatchers("/*.html", "/**/*.html", "/**/*.js", "/**/*.css").permitAll()
-                .antMatchers("/oauth/*", "/auth/**").permitAll()
                 .antMatchers("/api/role/query").hasRole("管理员")
                 .anyRequest().authenticated()
 
@@ -137,7 +136,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/login")
+        web.ignoring().antMatchers("/login", "/auth")
 
                 .and()
 

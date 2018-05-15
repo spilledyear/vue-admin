@@ -9,6 +9,7 @@ import java.util.List;
  * @author spilledyear
  * @date 2018/4/21 13:33
  */
+@Component
 public interface UserMapper {
     /**
      * 查询用户

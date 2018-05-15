@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * @author spilledyear
  * <p>
- * 自定义UserDetailsService 接口
+ * 自定义userdetailsservice 接口
  */
 @Service
 public class CustomUserService implements UserDetailsService {
@@ -61,7 +61,7 @@ public class CustomUserService implements UserDetailsService {
         }
 
         UserDetails userDetails = new CustomUser(user.getUserId(), user.getUsername(), user.getPassword(),
-                true, true, true, true, authorities);
+                true, true, true, true, authorities, null);
         return userDetails;
     }
 
