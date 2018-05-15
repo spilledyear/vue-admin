@@ -47,28 +47,26 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
             try {
                 username = jwtTokenUtil.getUsernameFromToken(authToken);
             } catch (IllegalArgumentException e) {
-                logger.error("an error occured during getting username from token", e);
+                logger.error("从Token中获取用户名失败", e);
             } catch (ExpiredJwtException e) {
-                logger.warn("the token is expired and not valid anymore", e);
+                logger.warn("这个Token已经失效了", e);
             }
         } else {
-            logger.warn("couldn't find bearer string, will ignore the header");
+            logger.warn("请求头中未发现 Bearer 字符串, 将忽略这个请求头");
         }
 
-        logger.debug("checking authentication for user '{}'", username);
+        logger.debug("检查用户  '{}'  的权限", username);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             logger.debug("security context was null, so authorizating user");
 
-            // It is not compelling necessary to load the use details from the database. You could also store the information
-            // in the token and read it from it. It's up to you ;)
+            // 也可以将用户信息保存在token中，这时候就可以不用查数据库
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
-            // the database compellingly. Again it's up to you ;)
+            // 校验前端传过来的Token是否有问题
             if (jwtTokenUtil.validateToken(authToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                logger.info("authorizated user '{}', setting security context", username);
+                logger.info("用户 '{}' 授权成功, 赋值给 SecurityContextHolder 上下文", username);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
