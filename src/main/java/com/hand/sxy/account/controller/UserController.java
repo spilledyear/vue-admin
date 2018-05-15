@@ -2,7 +2,7 @@ package com.hand.sxy.account.controller;
 
 import com.hand.sxy.account.dto.User;
 import com.hand.sxy.account.service.IUserSrvice;
-import com.hand.sxy.system.dto.Result;
+import com.hand.sxy.system.dto.ResultResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class UserController {
     private IUserSrvice userSrvice;
 
     @RequestMapping(value = "/api/user/query", method = RequestMethod.POST, consumes = "application/json")
-    public Result query(HttpServletRequest request, @RequestBody User user) {
-        return new Result(userSrvice.query(user));
+    public ResultResponse query(HttpServletRequest request, @RequestBody User user) {
+        return new ResultResponse(userSrvice.query(user));
     }
 }

@@ -1,10 +1,12 @@
 package com.hand.sxy.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * @author spilledyear
@@ -19,6 +21,7 @@ public class CustomUser implements UserDetails, Serializable {
     final boolean credentialsNonExpired;
     final boolean accountNonLocked;
     final Collection<? extends GrantedAuthority> authorities;
+    final Date lastPasswordResetDate;
 
     public CustomUser(Long userId, String userName, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         this.userId = userId;
@@ -29,6 +32,20 @@ public class CustomUser implements UserDetails, Serializable {
         this.credentialsNonExpired = credentialsNonExpired;
         this.accountNonLocked = accountNonLocked;
         this.authorities = authorities;
+        this.lastPasswordResetDate = null;
+    }
+
+    public CustomUser(Long userId, String userName, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
+                      Collection<? extends GrantedAuthority> authorities, Date lastPasswordResetDate) {
+        this.userId = userId;
+        this.userName = userName;
+        this.password = password;
+        this.enabled = enabled;
+        this.accountNonExpired = accountNonExpired;
+        this.credentialsNonExpired = credentialsNonExpired;
+        this.accountNonLocked = accountNonLocked;
+        this.authorities = authorities;
+        this.lastPasswordResetDate = lastPasswordResetDate;
     }
 
 
@@ -36,10 +53,9 @@ public class CustomUser implements UserDetails, Serializable {
         return userId;
     }
 
-
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+    public String getUsername() {
+        return userName;
     }
 
     @Override
@@ -48,8 +64,8 @@ public class CustomUser implements UserDetails, Serializable {
     }
 
     @Override
-    public String getUsername() {
-        return userName;
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
@@ -68,7 +84,13 @@ public class CustomUser implements UserDetails, Serializable {
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+
+    @JsonIgnore
+    public Date getLastPasswordResetDate() {
+        return lastPasswordResetDate;
     }
 }

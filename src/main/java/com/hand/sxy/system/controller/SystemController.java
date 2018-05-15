@@ -2,10 +2,9 @@ package com.hand.sxy.system.controller;
 
 import com.hand.sxy.account.dto.User;
 import com.hand.sxy.jwt.AuthenticationException;
-import com.hand.sxy.jwt.JwtAuthenticationResponse;
 import com.hand.sxy.jwt.JwtTokenUtil;
-import com.hand.sxy.jwt.JwtUser;
-import com.hand.sxy.system.dto.Result;
+import com.hand.sxy.security.CustomUser;
+import com.hand.sxy.system.dto.TokenResponse;
 import com.hand.sxy.system.service.ILoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,23 +53,71 @@ public class SystemController {
     private UserDetailsService userDetailsService;
 
 
-    @RequestMapping(value = "/api/system/login", method = RequestMethod.POST)
-    @ResponseBody
-    public Result login(HttpServletRequest request, User user) {
+    /**
+     * 认证接口，用于前端获取 JWT 的接口
+     *
+     * @param user
+     * @return
+     * @throws AuthenticationException
+     */
+    @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
+    public ResponseEntity<?> obtainToken(@RequestBody User user) throws AuthenticationException {
 
-        List<User> userList = loginService.login(user);
-        Result result = new Result(userList);
-
-        if (userList == null || userList.isEmpty()) {
-            logger.info("登录失败，用户名或密码错误");
-            result.setSuccess(false);
-            result.setMessage("用户名或密码错误");
-            return result;
+        /**
+         * 通过调用 spring-security 中的 authenticationManager 对用户进行验证
+         */
+        Objects.requireNonNull(user.getUsername());
+        Objects.requireNonNull(user.getPassword());
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        } catch (DisabledException e) {
+            throw new AuthenticationException("该已被被禁用，请检查", e);
+        } catch (BadCredentialsException e) {
+            throw new AuthenticationException("无效的密码，请检查", e);
         }
 
-        logger.info("登录成功");
-        return result;
+        // Reload password post-security so we can generate the token
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+        final String token = jwtTokenUtil.generateToken(userDetails);
+
+        // 返回token
+        return ResponseEntity.ok(new TokenResponse(token));
     }
+
+
+    /**
+     * 刷新Token
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+        String authToken = request.getHeader(tokenHeader);
+        final String token = authToken.substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        CustomUser customUser = (CustomUser) userDetailsService.loadUserByUsername(username);
+
+        if (jwtTokenUtil.canTokenBeRefreshed(token, customUser.getLastPasswordResetDate())) {
+            String refreshedToken = jwtTokenUtil.refreshToken(token);
+            return ResponseEntity.ok(new TokenResponse(refreshedToken));
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+
+    /**
+     * 处理 AuthenticationException 异常
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler({AuthenticationException.class})
+    public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
+
 
     @RequestMapping("/login")
     public String require(HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
@@ -87,62 +134,5 @@ public class SystemController {
         request.getSession().setAttribute("test", "6666666666666");
 
         return "index";
-    }
-
-
-    /**
-     * 获取token
-     *
-     * @param user
-     * @return
-     * @throws AuthenticationException
-     */
-    @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
-    public ResponseEntity<?> auth(@RequestBody User user) throws AuthenticationException {
-
-        authenticate(user.getUsername(), user.getPassword());
-
-        // Reload password post-security so we can generate the token
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
-
-        // Return the token
-        return ResponseEntity.ok(new Result(token));
-    }
-
-    @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
-    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
-        String authToken = request.getHeader(tokenHeader);
-        final String token = authToken.substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
-
-        if (jwtTokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
-            String refreshedToken = jwtTokenUtil.refreshToken(token);
-            return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
-        } else {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-
-    @ExceptionHandler({AuthenticationException.class})
-    public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-    }
-
-    /**
-     * Authenticates the user. If something is wrong, an {@link AuthenticationException} will be thrown
-     */
-    private void authenticate(String username, String password) {
-        Objects.requireNonNull(username);
-        Objects.requireNonNull(password);
-
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new AuthenticationException("User is disabled!", e);
-        } catch (BadCredentialsException e) {
-            throw new AuthenticationException("Bad credentials!", e);
-        }
     }
 }

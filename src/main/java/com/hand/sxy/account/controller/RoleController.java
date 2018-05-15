@@ -1,10 +1,8 @@
 package com.hand.sxy.account.controller;
 
 import com.hand.sxy.account.dto.Role;
-import com.hand.sxy.account.dto.User;
 import com.hand.sxy.account.service.IRoleSrvice;
-import com.hand.sxy.account.service.IUserSrvice;
-import com.hand.sxy.system.dto.Result;
+import com.hand.sxy.system.dto.ResultResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,7 @@ public class RoleController {
     private IRoleSrvice roleSrvice;
 
     @RequestMapping(value = "/api/role/query", method = RequestMethod.POST)
-    public Result query(HttpServletRequest request, @RequestBody Role dto) {
-        return new Result(roleSrvice.query(dto));
+    public ResultResponse query(HttpServletRequest request, @RequestBody Role dto) {
+        return new ResultResponse(roleSrvice.query(dto));
     }
 }

@@ -8,10 +8,7 @@ import java.util.List;
  * @author spilledyear
  * @date 2018/4/24 20:27
  */
-public class Result {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String token;
-
+public class ResultResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String code;
 
@@ -26,31 +23,19 @@ public class Result {
 
     private Long total;
 
-    public Result() {
+    public ResultResponse() {
         this.success = true;
     }
 
-    public Result(String token) {
-        this.success = true;
-        this.token = token;
-    }
-
-    public Result(boolean success) {
+    public ResultResponse(boolean success) {
         this.success = true;
     }
 
-    public Result(List<?> list) {
+    public ResultResponse(List<?> list) {
         this(true);
         this.setRows(list);
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public String getCode() {
         return this.code;
