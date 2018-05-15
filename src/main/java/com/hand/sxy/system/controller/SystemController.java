@@ -5,7 +5,6 @@ import com.hand.sxy.jwt.AuthenticationException;
 import com.hand.sxy.jwt.JwtTokenUtil;
 import com.hand.sxy.security.CustomUser;
 import com.hand.sxy.system.dto.TokenResponse;
-import com.hand.sxy.system.service.ILoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +34,6 @@ import java.util.Objects;
 public class SystemController {
     private Logger logger = LoggerFactory.getLogger(SystemController.class);
 
-    @Autowired
-    private ILoginService loginService;
-
     @Value("${jwt.header}")
     private String tokenHeader;
 
@@ -51,7 +47,6 @@ public class SystemController {
     @Qualifier("customUserService")
     private UserDetailsService userDetailsService;
 
-
     /**
      * 认证接口，用于前端获取 JWT 的接口
      *
@@ -60,7 +55,8 @@ public class SystemController {
      * @throws AuthenticationException
      */
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
-    public ResponseEntity<?> obtainToken(@RequestBody User user) throws AuthenticationException {
+    @ResponseBody
+    public TokenResponse obtainToken(@RequestBody User user) throws AuthenticationException {
 
         /**
          * 通过调用 spring-security 中的 authenticationManager 对用户进行验证
@@ -79,8 +75,9 @@ public class SystemController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
 
-        // 返回token
-        return ResponseEntity.ok(new TokenResponse(token));
+
+//        return ResponseEntity.ok(new TokenResponse(true, token));
+        return new TokenResponse(true, token);
     }
 
 
@@ -91,7 +88,7 @@ public class SystemController {
      * @return
      */
     @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
-    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+    public TokenResponse refreshToken(HttpServletRequest request) {
         String authToken = request.getHeader(tokenHeader);
         final String token = authToken.substring(7);
         String username = jwtTokenUtil.getUsernameFromToken(token);
@@ -99,12 +96,11 @@ public class SystemController {
 
         if (jwtTokenUtil.canTokenBeRefreshed(token, customUser.getLastPasswordResetDate())) {
             String refreshedToken = jwtTokenUtil.refreshToken(token);
-            return ResponseEntity.ok(new TokenResponse(refreshedToken));
+            return new TokenResponse(true, refreshedToken);
         } else {
-            return ResponseEntity.badRequest().body(null);
+            return new TokenResponse(false, null);
         }
     }
-
 
     /**
      * 处理 AuthenticationException 异常

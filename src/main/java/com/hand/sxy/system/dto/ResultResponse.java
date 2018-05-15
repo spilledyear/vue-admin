@@ -18,10 +18,11 @@ public class ResultResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<?> rows;
 
-    private boolean success;
+    private Long total;
     @JsonInclude(JsonInclude.Include.NON_NULL)
 
-    private Long total;
+    private boolean success;
+
 
     public ResultResponse() {
         this.success = true;
