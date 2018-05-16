@@ -79,20 +79,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return rememberMeServices;
     }
 
+
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
 
-                // don't create session
+                /** 不创建 session **/
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-
+                .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/auth", "/oauth/*", "/api/**").permitAll()
+                .antMatchers("/login", "/auth", "/oauth/*").permitAll()
                 .antMatchers("/*.html", "/**/*.html", "/**/*.js", "/**/*.css").permitAll()
-                .antMatchers("/api/role/query").hasRole("管理员")
+                .antMatchers("/api/role/query").hasRole("ADMIN")
                 .anyRequest().authenticated()
 
                 .and()
@@ -101,18 +103,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/api/system/logout").permitAll();
 
-//        http.rememberMe().rememberMeServices(rememberMeServices());
 
-//        http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class).csrf().disable();
-
-        // Custom JWT based security filter
+        /**
+         * spring security过滤器链中，真正的用户信息校验是 UsernamePasswordAuthenticationFilter 过滤器，然后才是权限校验。
+         * 这里在 UsernamePasswordAuthenticationFilter过滤器之前 自定义一个过滤器，这样就可以提前根据token将authenticate信息
+         * 维护进speing security上下文，然后在 UsernamePasswordAuthenticationFilter 得到的就已经是通过校验的用户了。
+         */
         JwtAuthorizationTokenFilter authenticationTokenFilter = new JwtAuthorizationTokenFilter(customUserService(), jwtTokenUtil, tokenHeader);
-        http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // disable page caching
-        http.headers()
-                .frameOptions().sameOrigin()  // required to set for H2 else H2 Console will be blank.
-                .cacheControl();
+        /**
+         * disable page caching
+         *
+         * 下面这行代码巨玄乎，加了这个之后，前端应用就无法正常访问了(也就是说需要开发/api/**权限才能正常 访问)
+         */
+//        httpSecurity.headers().frameOptions().sameOrigin().cacheControl();
 
     }
 
@@ -136,11 +141,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(HttpMethod.POST,"/login", "/auth")
-
+    public void configure(WebSecurity webSecurity) {
+        webSecurity
+                .ignoring().antMatchers(HttpMethod.POST, "/login", "/auth")
+                
                 .and()
-
                 .ignoring().antMatchers("/**/*.html", "/**/*.js", "/**/*.css");
     }
 }
