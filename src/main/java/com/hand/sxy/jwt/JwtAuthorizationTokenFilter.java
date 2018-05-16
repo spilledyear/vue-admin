@@ -50,7 +50,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
                 logger.warn("这个Token已经失效了", e);
             }
         } else {
-            logger.warn("请求头中未发现 Token, 将执行Spring Security正常啊的验证流程");
+            logger.warn("请求头中未发现 Token, 将执行Spring Security正常的验证流程");
         }
 
         logger.debug("检查用户  '{}'  的权限", username);
