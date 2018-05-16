@@ -52,6 +52,7 @@ public class SystemController {
     @Autowired
     private IUserSrvice userService;
 
+
     /**
      * 认证接口，用于前端获取 JWT 的接口
      *
@@ -66,24 +67,22 @@ public class SystemController {
         /**
          * 通过调用 spring security 中的 authenticationManager 对用户进行验证
          */
-//        Objects.requireNonNull(user.getUsername());
-//        Objects.requireNonNull(user.getPassword());
-//        try {
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-//        } catch (DisabledException e) {
-//            throw new AuthenticationException("该已被被禁用，请检查", e);
-//        } catch (BadCredentialsException e) {
-//            throw new AuthenticationException("无效的密码，请检查", e);
-//        }
-        authenticate(user.getUsername(), user.getPassword());
+        Objects.requireNonNull(user.getUsername());
+        Objects.requireNonNull(user.getPassword());
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        } catch (DisabledException e) {
+            throw new AuthenticationException("该已被被禁用，请检查", e);
+        } catch (BadCredentialsException e) {
+            throw new AuthenticationException("无效的密码，请检查", e);
+        }
 
-
-        // Reload password post-security so we can generate the token
+        /**
+         * 根据用户名从数据库获取用户信息，然后生成 token
+         */
         final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
 
-
-//        return ResponseEntity.ok(new TokenResponse(true, token));
         return new TokenResponse(true, 200L, token);
     }
 
@@ -143,24 +142,20 @@ public class SystemController {
         return new ResultResponse();
     }
 
+
+    /**
+     * 首页
+     *
+     * @param request
+     * @param response
+     * @param map
+     * @return
+     */
     @RequestMapping("/")
     public String index(HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
 
         request.getSession().setAttribute("test", "6666666666666");
 
         return "index";
-    }
-
-    private void authenticate(String username, String password) {
-        Objects.requireNonNull(username);
-        Objects.requireNonNull(password);
-
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new AuthenticationException("User is disabled!", e);
-        } catch (BadCredentialsException e) {
-            throw new AuthenticationException("Bad credentials!", e);
-        }
     }
 }
