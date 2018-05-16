@@ -62,15 +62,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-
     /**
-     * //注册 UserDetailsService 的 Bean
+     * 注册 UserDetailsService 的 Bean
      *
      * @return
      */
     @Bean
     UserDetailsService customUserService() {
         return new CustomUserService();
+    }
+
+    /**
+     * Sring5 中密码加密新方式
+     *
+     * @return
+     */
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
@@ -96,8 +105,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/auth", "/oauth/*", "/register").permitAll()
                 .antMatchers("/*.html", "/**/*.html", "/**/*.js", "/**/*.css").permitAll()
+                .antMatchers("/login", "/auth", "/oauth/*", "/register").permitAll()
                 .antMatchers("/api/role/query").hasRole("ADMIN")
                 .anyRequest().authenticated()
 
@@ -153,10 +162,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .ignoring().antMatchers("/**/*.html", "/**/*.js", "/**/*.css");
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }
