@@ -82,6 +82,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+//        httpSecurity.rememberMe().rememberMeServices(rememberMeServices());
+//        httpSecurity.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class);
+
         httpSecurity
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
@@ -144,7 +147,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity webSecurity) {
         webSecurity
                 .ignoring().antMatchers(HttpMethod.POST, "/login", "/auth")
-                
+
                 .and()
                 .ignoring().antMatchers("/**/*.html", "/**/*.js", "/**/*.css");
     }
