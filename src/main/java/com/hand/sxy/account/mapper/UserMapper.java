@@ -27,4 +27,11 @@ public interface UserMapper {
      * @return
      */
     User selectByUserName(String username);
+
+    /**
+     * 用户注册
+     *
+     * @param user
+     */
+    void insert(User user);
 }

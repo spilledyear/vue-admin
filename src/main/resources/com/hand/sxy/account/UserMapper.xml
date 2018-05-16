@@ -19,4 +19,8 @@
     <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
         SELECT * FROM SYS_USER WHERE USERNAME = #{username,jdbcType=VARCHAR}
     </select>
+
+    <insert id="insert" parameterType="com.hand.sxy.account.dto.User">
+        INSERT INTO SYS_USER (USERNAME, PASSWORD) value (#{username}, #{password})
+    </insert>
 </mapper>

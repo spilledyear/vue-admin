@@ -5,6 +5,7 @@ import java.util.Date;
 public class Role {
     private Long roleId;
     private String roleName;
+    private String roleCode;
     private String description;
     private String status;
     private Date createTime;
@@ -17,6 +18,14 @@ public class Role {
 
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
+    }
+
+    public String getRoleCode() {
+        return roleCode;
+    }
+
+    public void setRoleCode(String roleCode) {
+        this.roleCode = roleCode;
     }
 
     public String getRoleName() {

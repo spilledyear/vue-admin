@@ -16,4 +16,11 @@ public interface IUserSrvice {
      * @return
      */
     List<User> query(User dto);
+
+    /**
+     * 用户注册
+     *
+     * @param user
+     */
+    void register(User user);
 }

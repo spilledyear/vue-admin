@@ -4,6 +4,7 @@
 <mapper namespace="com.hand.sxy.account.mapper.RoleMapper">
     <resultMap id="BaseResultMap" type="com.hand.sxy.account.dto.Role">
         <id column="ROLE_ID" property="roleId" jdbcType="DECIMAL"/>
+        <result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR"/>
         <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR"/>
         <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>

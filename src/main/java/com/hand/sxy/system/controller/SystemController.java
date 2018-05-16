@@ -1,9 +1,11 @@
 package com.hand.sxy.system.controller;
 
 import com.hand.sxy.account.dto.User;
+import com.hand.sxy.account.service.IUserSrvice;
 import com.hand.sxy.jwt.AuthenticationException;
 import com.hand.sxy.jwt.JwtTokenUtil;
 import com.hand.sxy.security.CustomUser;
+import com.hand.sxy.system.dto.ResultResponse;
 import com.hand.sxy.system.dto.TokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,9 @@ public class SystemController {
     @Autowired
     @Qualifier("customUserService")
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private IUserSrvice userService;
 
     /**
      * 认证接口，用于前端获取 JWT 的接口
@@ -123,6 +128,19 @@ public class SystemController {
          * return new ModelAndView("loginPage", map);
          */
         return "login";
+    }
+
+    /**
+     * 注册
+     *
+     * @param user
+     * @return
+     */
+    @RequestMapping("/register")
+    @ResponseBody
+    public ResultResponse register(@RequestBody User user) {
+        userService.register(user);
+        return new ResultResponse();
     }
 
     @RequestMapping("/")

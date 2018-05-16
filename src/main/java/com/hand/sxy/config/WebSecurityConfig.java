@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -95,7 +96,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/auth", "/oauth/*").permitAll()
+                .antMatchers("/login", "/auth", "/oauth/*", "/register").permitAll()
                 .antMatchers("/*.html", "/**/*.html", "/**/*.js", "/**/*.css").permitAll()
                 .antMatchers("/api/role/query").hasRole("ADMIN")
                 .anyRequest().authenticated()
@@ -129,18 +130,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         /**
          * userDetailService验证
          */
-        auth.userDetailsService(customUserService()).passwordEncoder(new PasswordEncoder() {
+//        auth.userDetailsService(customUserService()).passwordEncoder(new PasswordEncoder() {
+//
+//            @Override
+//            public String encode(CharSequence rawPassword) {
+//                return rawPassword.toString();
+//            }
+//
+//            @Override
+//            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+//                return encodedPassword.equals(rawPassword.toString());
+//            }
+//        });
 
-            @Override
-            public String encode(CharSequence rawPassword) {
-                return rawPassword.toString();
-            }
-
-            @Override
-            public boolean matches(CharSequence rawPassword, String encodedPassword) {
-                return encodedPassword.equals(rawPassword.toString());
-            }
-        });
+        auth.userDetailsService(customUserService()).passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -150,5 +153,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .ignoring().antMatchers("/**/*.html", "/**/*.js", "/**/*.css");
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }

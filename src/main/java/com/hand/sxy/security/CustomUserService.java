@@ -55,7 +55,7 @@ public class CustomUserService implements UserDetailsService {
         if (!CollectionUtils.isEmpty(roleList)) {
             for (Role role : roleList) {
 //                GrantedAuthority grantedAuthority = new MyGrantedAuthority(permission.getUrl(), permission.getMethod());
-                GrantedAuthority auth = new SimpleGrantedAuthority(role.getRoleName());
+                GrantedAuthority auth = new SimpleGrantedAuthority(role.getRoleCode());
                 authorities.add(auth);
             }
         }

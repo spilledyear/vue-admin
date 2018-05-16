@@ -4,6 +4,7 @@ import com.hand.sxy.account.dto.User;
 import com.hand.sxy.account.mapper.UserMapper;
 import com.hand.sxy.account.service.IUserSrvice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +19,19 @@ public class UserServiceImpl implements IUserSrvice {
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public List<User> query(User dto) {
         return userMapper.query(dto);
+    }
+
+    @Override
+    public void register(User user) {
+        String passwordEncrypted = passwordEncoder.encode(user.getPassword());
+        user.setPassword(passwordEncrypted);
+
+        userMapper.insert(user);
     }
 }
