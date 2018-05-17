@@ -25,6 +25,11 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 /**
  * @author spilledyear
@@ -82,12 +87,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    @Bean
-    RememberMeServices rememberMeServices() {
-        SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
-        rememberMeServices.setAlwaysRemember(true);
-        return rememberMeServices;
-    }
+//    @Bean
+//    RememberMeServices rememberMeServices() {
+//        SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
+//        rememberMeServices.setAlwaysRemember(true);
+//        return rememberMeServices;
+//    }
+
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8082"));
+//        configuration.addAllowedHeader("*");
+//        configuration.setAllowedMethods(Arrays.asList("POST, GET, OPTIONS, PUT, DELETE"));
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
 
     @Override
@@ -96,6 +112,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        httpSecurity.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class);
 
         httpSecurity
+                .cors().and()
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
 
@@ -106,7 +123,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/*.html", "/**/*.html", "/**/*.js", "/**/*.css").permitAll()
-                .antMatchers("/login", "/auth", "/oauth/*", "/register").permitAll()
+                .antMatchers("/login", "/register", "/auth", "/oauth/*").permitAll()
                 .antMatchers("/api/role/query").hasRole("ADMIN")
                 .anyRequest().authenticated()
 

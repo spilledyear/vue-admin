@@ -41,7 +41,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         final String token = request.getHeader(this.tokenHeader);
 
         String username = null;
-        if (token != null) {
+        if (token != null && !"".equals(token)) {
             try {
                 username = jwtTokenUtil.getUsernameFromToken(token);
             } catch (IllegalArgumentException e) {
@@ -53,7 +53,6 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
             logger.warn("请求头中未发现 Token, 将执行Spring Security正常的验证流程");
         }
 
-        logger.debug("检查用户  '{}'  的权限", username);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             logger.debug("security context was null, so authorizating user");
 
