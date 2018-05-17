@@ -12,7 +12,16 @@
     </resultMap>
 
     <select id="query" resultMap="BaseResultMap" parameterType="com.hand.sxy.account.dto.User">
-        SELECT * FROM SYS_USER WHERE USERNAME = #{username} AND PASSWORD = #{password}
+        SELECT * FROM SYS_USER
+        WHERE
+          1 = 1
+
+        <if test="userId!=null">
+          AND USER_ID = #{userId}
+        </if>
+        <if test="username!=null">
+          AND USERNAME = #{username}
+        </if>
     </select>
 
 

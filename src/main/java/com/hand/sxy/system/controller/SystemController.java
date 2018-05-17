@@ -6,7 +6,6 @@ import com.hand.sxy.jwt.AuthenticationException;
 import com.hand.sxy.jwt.JwtTokenUtil;
 import com.hand.sxy.security.CustomUser;
 import com.hand.sxy.system.dto.ResultResponse;
-import com.hand.sxy.system.dto.TokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -62,7 +62,7 @@ public class SystemController {
      */
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
     @ResponseBody
-    public TokenResponse obtainToken(@RequestBody User user) throws AuthenticationException {
+    public ResultResponse obtainToken(@RequestBody User user) throws AuthenticationException {
 
         /**
          * 通过调用 spring security 中的 authenticationManager 对用户进行验证
@@ -83,7 +83,10 @@ public class SystemController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
 
-        return new TokenResponse(true, 200L, token);
+        List<User> userList = userService.query(user);
+        ResultResponse resultSet = new ResultResponse(true, token);
+        resultSet.setRows(userList);
+        return resultSet;
     }
 
 
@@ -94,7 +97,7 @@ public class SystemController {
      * @return
      */
     @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
-    public TokenResponse refreshToken(HttpServletRequest request) {
+    public ResultResponse refreshToken(HttpServletRequest request) {
         String authToken = request.getHeader(tokenHeader);
         final String token = authToken.substring(7);
         String username = jwtTokenUtil.getUsernameFromToken(token);
@@ -102,9 +105,9 @@ public class SystemController {
 
         if (jwtTokenUtil.canTokenBeRefreshed(token, customUser.getLastPasswordResetDate())) {
             String refreshedToken = jwtTokenUtil.refreshToken(token);
-            return new TokenResponse(true, 200L, refreshedToken);
+            return new ResultResponse(true, refreshedToken);
         } else {
-            return new TokenResponse(false, 200L, null);
+            return new ResultResponse(false);
         }
     }
 

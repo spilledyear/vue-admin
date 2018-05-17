@@ -28,6 +28,7 @@ public interface UserMapper {
      */
     User selectByUserName(String username);
 
+
     /**
      * 用户注册
      *

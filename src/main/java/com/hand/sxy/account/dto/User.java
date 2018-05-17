@@ -14,6 +14,9 @@ public class User {
     private Date birthDate;
     private Long age;
 
+    public User() {
+
+    }
 
     public Long getUserId() {
         return userId;

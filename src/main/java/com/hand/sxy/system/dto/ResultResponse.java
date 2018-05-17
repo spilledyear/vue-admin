@@ -10,7 +10,9 @@ import java.util.List;
  */
 public class ResultResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String code;
+    private String code = "200";
+
+    private String token;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String message;
@@ -32,6 +34,11 @@ public class ResultResponse {
         this.success = true;
     }
 
+    public ResultResponse(boolean success, String token) {
+        this.token = token;
+        this.success = true;
+    }
+
     public ResultResponse(List<?> list) {
         this(true);
         this.setRows(list);
@@ -44,6 +51,14 @@ public class ResultResponse {
 
     public String getMessage() {
         return this.message;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void getCode(String code) {
+        this.code = code;
     }
 
     public List<?> getRows() {
@@ -60,6 +75,10 @@ public class ResultResponse {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public void setMessage(String message) {
