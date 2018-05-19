@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hand.sxy.account.mapper.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.hand.sxy.account.dto.Role">
+        <id column="ROLE_ID" property="roleId" jdbcType="DECIMAL"/>
+        <result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR"/>
+        <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="DATE"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="DATE"/>
+    </resultMap>
+
+
+    <select id="query" resultMap="BaseResultMap" parameterType="com.hand.sxy.account.dto.Role">
+        SELECT SR.* FROM sys_role sr LEFT JOIN sys_user_role sur ON sr.ROLE_ID = sur.ROLE_ID
+
+        <where>
+            <if test="userId!=null">
+                AND USER_ID = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryByUser" resultMap="BaseResultMap" parameterType="com.hand.sxy.account.dto.User">
+        SELECT SR.* FROM sys_role sr LEFT JOIN sys_user_role sur ON sr.ROLE_ID = sur.ROLE_ID
+
+        <where>
+            <if test="userId!=null">
+                AND USER_ID = #{userId}
+            </if>
+        </where>
+    </select>
+</mapper>

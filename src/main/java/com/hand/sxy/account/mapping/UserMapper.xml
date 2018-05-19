@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hand.sxy.account.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.hand.sxy.account.dto.User">
+        <id column="USER_ID" property="userId" jdbcType="DECIMAL"/>
+        <result column="USERNAME" property="username" jdbcType="VARCHAR"/>
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR"/>
+        <result column="PHONE" property="phone" jdbcType="VARCHAR"/>
+        <result column="BIRTH_DATE" property="birthDate" jdbcType="DATE"/>
+        <result column="AGE" property="age" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <select id="query" resultMap="BaseResultMap" parameterType="com.hand.sxy.account.dto.User">
+        SELECT * FROM SYS_USER
+        WHERE
+          1 = 1
+
+        <if test="userId!=null">
+          AND USER_ID = #{userId}
+        </if>
+        <if test="username!=null">
+          AND USERNAME = #{username}
+        </if>
+    </select>
+
+
+    <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT * FROM SYS_USER WHERE USERNAME = #{username,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hand.sxy.account.dto.User">
+        INSERT INTO SYS_USER (USERNAME, PASSWORD) value (#{username}, #{password})
+    </insert>
+</mapper>
