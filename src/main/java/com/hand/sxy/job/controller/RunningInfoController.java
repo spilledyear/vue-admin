@@ -31,7 +31,7 @@ public class RunningInfoController {
      */
     @RequestMapping(value = "/query")
     @ResponseBody
-    public ResultResponse queryJobRunningInfo(JobRunningInfoDto dto) {
+    public ResultResponse query(JobRunningInfoDto dto) {
         int page = 1;
         int pagesize = 20;
         return new ResultResponse(jobRunningInfoService.query(dto, page, pagesize));
