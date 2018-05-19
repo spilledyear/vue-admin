@@ -1,11 +1,11 @@
 package com.hand.sxy.job.service;
 
-import com.hand.sxy.job.dto.JobRunningInfoDto;
+import com.hand.sxy.job.dto.JobRecord;
 
 import java.util.List;
 
 
-public interface IJobRunningInfoService {
+public interface IJobRecordService {
 
     /**
      * 查询Job运行记录
@@ -15,14 +15,14 @@ public interface IJobRunningInfoService {
      * @param pagesize
      * @return
      */
-    List<JobRunningInfoDto> query(JobRunningInfoDto dto, int page, int pagesize);
+    List<JobRecord> query(JobRecord dto, int page, int pagesize);
 
     /**
      * 新建运行记录.
      *
      * @param dto 运行记录
      */
-    void createJobRunningInfo(JobRunningInfoDto dto);
+    void createJobRunningInfo(JobRecord dto);
 
 
     /**
@@ -30,5 +30,5 @@ public interface IJobRunningInfoService {
      *
      * @param dto 记录
      */
-    void delete(JobRunningInfoDto dto);
+    void delete(JobRecord dto);
 }

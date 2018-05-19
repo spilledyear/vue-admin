@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- ~ #{copyright}# -->
-
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hand.sxy.job.mapper.JobRunningInfoDtoMapper">
-    <resultMap id="BaseResultMap" type="com.hand.sxy.job.dto.JobRunningInfoDto">
+
+<mapper namespace="com.hand.sxy.job.mapper.JobRecordDtoMapper">
+    <resultMap id="BaseResultMap" type="com.hand.sxy.job.dto.JobRecord">
         <id column="JOB_RUNNING_INFO_ID" property="jobRunningInfoId" jdbcType="DECIMAL" />
         <result column="JOB_NAME" property="jobName" jdbcType="VARCHAR" />
         <result column="JOB_GROUP" property="jobGroup" jdbcType="VARCHAR" />
@@ -25,15 +24,14 @@
         <result column="UPDATE_TIME" property="updateTime" jdbcType="DATE" />
     </resultMap>
 
-    <select id="query" resultMap="BaseResultMap" parameterType="com.hand.sxy.job.dto.JobRunningInfoDto">
-        SELECT * FROM SYS_JOB_RUNNING_INFO
+    <select id="query" resultMap="BaseResultMap" parameterType="com.hand.sxy.job.dto.JobRecord">
+        SELECT * FROM SYS_JOB_RECORD
     </select>
 
-    <delete id="deleteByNameGroup" parameterType="com.hand.sxy.job.dto.JobRunningInfoDto">
-        delete from
-        SYS_JOB_RUNNING_INFO
-        where job_name =
-        #{jobName,jdbcType=VARCHAR} and job_group = #{jobGroup,jdbcType=VARCHAR}
+    <delete id="deleteByNameGroup" parameterType="com.hand.sxy.job.dto.JobRecord">
+        DELETE FROM SYS_JOB_RECORD
+        WHERE
+          job_name = #{jobName,jdbcType=VARCHAR} and job_group = #{jobGroup,jdbcType=VARCHAR}
     </delete>
 
 </mapper>

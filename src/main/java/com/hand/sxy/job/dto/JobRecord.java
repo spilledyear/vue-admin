@@ -3,7 +3,7 @@ package com.hand.sxy.job.dto;
 import java.util.Date;
 
 
-public class JobRunningInfoDto {
+public class JobRecord {
     private static final long serialVersionUID = -6714732735643965630L;
 
     private Long jobRunningInfoId;
