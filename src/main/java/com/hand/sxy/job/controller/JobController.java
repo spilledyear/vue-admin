@@ -1,6 +1,9 @@
 package com.hand.sxy.job.controller;
 
 import com.hand.sxy.job.BasalJob;
+import com.hand.sxy.job.dto.JobDetailDto;
+import com.hand.sxy.job.service.IQuartzService;
+import com.hand.sxy.system.dto.ResultResponse;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
@@ -15,17 +18,36 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * @author spilledyear
  */
 @RestController
-@RequestMapping(value = "/job")
+@RequestMapping(value = {"/job", "/api/job"})
 public class JobController {
     private static Logger log = LoggerFactory.getLogger(JobController.class);
 
     @Autowired
     private Scheduler scheduler;
+
+    @Autowired
+    private IQuartzService quartzService;
+
+
+    /**
+     * 查询job列表.
+     *
+     * @param jobDetail 查询参数
+     * @return job结果列表
+     */
+    @RequestMapping("/query")
+    public ResultResponse queryJobs(@ModelAttribute JobDetailDto jobDetail) {
+        int page = 1;
+        int pagesize = 20;
+        return new ResultResponse(quartzService.getJobInfoDetails(jobDetail, page, pagesize));
+    }
 
 
     @RequestMapping(value = "/addjob", method = RequestMethod.GET)
@@ -42,13 +64,13 @@ public class JobController {
         scheduler.start();
 
         //构建job信息
-        JobDetail jobDetail = JobBuilder.newJob(getClass(jobClassName).getClass()).withIdentity(jobGroup, jobName).build();
+        JobDetail jobDetail = JobBuilder.newJob(getClass(jobClassName).getClass()).withIdentity(jobName, jobGroup).build();
 
         //表达式调度构建器(即任务执行的时间)
         CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
 
         //按新的cronExpression表达式构建一个新的trigger
-        CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobGroup, jobName)
+        CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroup)
                 .withSchedule(scheduleBuilder).build();
 
         try {
