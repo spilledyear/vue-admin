@@ -22,7 +22,7 @@ public interface IJobRecordService {
      *
      * @param dto 运行记录
      */
-    void createJobRunningInfo(JobRecord dto);
+    void insert(JobRecord dto);
 
 
     /**

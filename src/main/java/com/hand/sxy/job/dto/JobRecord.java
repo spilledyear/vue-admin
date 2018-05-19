@@ -6,7 +6,7 @@ import java.util.Date;
 public class JobRecord {
     private static final long serialVersionUID = -6714732735643965630L;
 
-    private Long jobRunningInfoId;
+    private Long jobRecordId;
 
     private String jobName;
 
@@ -44,12 +44,12 @@ public class JobRecord {
 
     private Date updateTime;
 
-    public Long getJobRunningInfoId() {
-        return jobRunningInfoId;
+    public Long getJobRecordId() {
+        return jobRecordId;
     }
 
-    public void setJobRunningInfoId(Long jobRunningInfoId) {
-        this.jobRunningInfoId = jobRunningInfoId;
+    public void setJobRecordId(Long jobRecordId) {
+        this.jobRecordId = jobRecordId;
     }
 
     public String getJobName() {

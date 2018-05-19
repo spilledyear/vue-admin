@@ -1,7 +1,7 @@
 package com.hand.sxy.job.service.impl;
 
 import com.hand.sxy.job.dto.JobRecord;
-import com.hand.sxy.job.mapper.JobRecordDtoMapper;
+import com.hand.sxy.job.mapper.JobRecordMapper;
 import com.hand.sxy.job.service.IJobRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,20 +15,21 @@ import java.util.List;
 public class JobRecordService implements IJobRecordService {
 
     @Autowired
-    private JobRecordDtoMapper jobRecordDtoMapper;
+    private JobRecordMapper jobRecordMapper;
 
     @Override
     public List<JobRecord> query(JobRecord dto, int page, int pagesize) {
-        return jobRecordDtoMapper.query(dto);
+        return jobRecordMapper.query(dto);
     }
 
     @Override
-    public void createJobRunningInfo(JobRecord dto) {
+    public void insert(JobRecord dto) {
+        jobRecordMapper.insert(dto);
     }
 
     @Override
     public void delete(JobRecord dto) {
-        jobRecordDtoMapper.deleteByNameGroup(dto);
+        jobRecordMapper.delete(dto);
     }
 
 }
