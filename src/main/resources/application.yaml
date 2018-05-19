@@ -59,6 +59,7 @@ spring:
 
 mybatis:
   mapper-locations: classpath:**/*.xml
+#  type-aliases-package: com.hand.sxy.*.dto
 
 jwt:
   header: Authorization
@@ -75,7 +76,7 @@ logging:
     org:
       springframework:
         security: DEBUG
-    com: WARN
+    com: INFO
 #      hand:
 #        sxy: DEBUG
 
