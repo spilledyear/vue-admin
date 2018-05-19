@@ -21,8 +21,13 @@
         <result column="SCHEDULER_INSTANCE_ID" property="schedulerInstanceId" jdbcType="VARCHAR" />
         <result column="SCHEDULED_FIRE_TIME" property="scheduledFireTime" jdbcType="TIMESTAMP" />
         <result column="IP_ADDRESS" property="ipAddress" jdbcType="VARCHAR" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="DATE" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="DATE" />
     </resultMap>
 
+    <select id="query" resultMap="BaseResultMap" parameterType="com.hand.sxy.job.dto.JobRunningInfoDto">
+        SELECT * FROM SYS_JOB_RUNNING_INFO
+    </select>
 
     <delete id="deleteByNameGroup" parameterType="com.hand.sxy.job.dto.JobRunningInfoDto">
         delete from

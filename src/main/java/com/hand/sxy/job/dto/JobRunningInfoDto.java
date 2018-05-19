@@ -3,10 +3,7 @@ package com.hand.sxy.job.dto;
 import java.util.Date;
 
 
-public class JobRunningInfoDto{
-    /**
-     * 
-     */
+public class JobRunningInfoDto {
     private static final long serialVersionUID = -6714732735643965630L;
 
     private Long jobRunningInfoId;
@@ -24,13 +21,13 @@ public class JobRunningInfoDto{
     private String triggerName;
 
     private String triggerGroup;
-    
+
     private String executionSummary;
 
     private Date previousFireTime;
-    
+
     private Date fireTime;
-    
+
     private Date nextFireTime;
 
     private Long refireCount;
@@ -38,10 +35,14 @@ public class JobRunningInfoDto{
     private String fireInstanceId;
 
     private String schedulerInstanceId;
-    
+
     private Date scheduledFireTime;
 
     private String ipAddress;
+
+    private Date createTime;
+
+    private Date updateTime;
 
     public Long getJobRunningInfoId() {
         return jobRunningInfoId;
@@ -177,5 +178,21 @@ public class JobRunningInfoDto{
 
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }
