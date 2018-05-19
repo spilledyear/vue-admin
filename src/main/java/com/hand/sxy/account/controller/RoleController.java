@@ -25,7 +25,7 @@ public class RoleController {
     @Autowired
     private IRoleSrvice roleSrvice;
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/api/role/query", method = RequestMethod.POST)
     public ResultResponse query(HttpServletRequest request, @RequestBody Role dto) {
         return new ResultResponse(roleSrvice.query(dto));
